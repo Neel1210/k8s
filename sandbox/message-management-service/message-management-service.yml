@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-mgmt
+  namespace: sandbox
+  labels:
+    app: message-mgmt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: message-mgmt
+  template:
+    metadata:
+      labels:
+        app: message-mgmt
+    spec:
+      containers:
+        - name: message-mgmt
+          image: message-mgmt:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8089
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-mgmt-service
+  namespace: sandbox
+spec:
+  type: ClusterIP
+  selector:
+    app: message-mgmt
+  ports:
+    - name: http
+      port: 8089
+      targetPort: 8089

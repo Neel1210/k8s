@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbit-mq
+  namespace: sandbox
+  labels:
+    app: rabbit-mq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbit-mq
+  template:
+    metadata:
+      labels:
+        app: rabbit-mq
+    spec:
+      containers:
+        - name: rabbit-mq
+          image: rabbitmq:3.13-management
+          ports:
+            - containerPort: 5672 # AMQP
+            - containerPort: 15672 # Management UI
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: "admin"
+            - name: RABBITMQ_DEFAULT_PASS
+              value: "admin"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rabbit-mq-service
+  namespace: sandbox
+spec:
+  selector:
+    app: rabbit-mq
+  ports:
+    - name: http-ui
+      protocol: TCP
+      port: 15672
+      targetPort: 15672
+  type: ClusterIP
