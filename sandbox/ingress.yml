@@ -13,6 +13,6 @@ spec:
            pathType: Prefix
            backend:
              service:
-               name: message-management-service
+               name: sandbox-message-management-service
                port:
                  number: 8081
