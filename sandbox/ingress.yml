@@ -31,7 +31,6 @@ spec:
         paths:
           - path: /console/?(.*)
             pathType: ImplementationSpecific
-#pathType: Prefix
             backend:
               service:
                 name: kubernetes-dashboard
