@@ -9,24 +9,10 @@ spec:
   rules:
     - http:
         paths:
-          - path: /rabbitmq-dashboard
-            pathType: Prefix
-            backend:
-              service:
-                name: rabbit-mq-service
-                port:
-                  number: 15672
-          - path: /rabbitmq-amqp
-            pathType: Prefix
-            backend:
-              service:
-                name: rabbit-mq-service
-                port:
-                  number: 5672
-#          - path: /message-management-service
-#            pathType: Prefix
-#            backend:
-#              service:
-#                name: message-mgmt-service
-#                port:
-#                  number: 8089
+         - path: /message-management-service
+           pathType: Prefix
+           backend:
+             service:
+               name: message-management-service
+               port:
+                 number: 8081

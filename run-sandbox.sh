@@ -30,10 +30,10 @@ kubectl apply -f ./sandbox/sandbox-ns.yml
 # 5. Apply ingress in that namespace
 kubectl apply -f ./sandbox/ingress.yml
 
-# 6. Apply rabbit-mq service in that namespace
-kubectl apply -f ./sandbox/rabbit-mq/rabbit-mq.yml
+# 6. Apply message-management-service in that namespace
+kubectl apply -f ./sandbox/message-management-service/message-management-service.yml
 
-# 7. Apply port forwaeding
-kubectl port-forward --address 0.0.0.0 svc/ingress-nginx-controller 8090:80 &
+# 7. Apply port forwarding
+kubectl port-forward --address 0.0.0.0 svc/ingress-nginx-controller 8090:80 
 
 echo "✅ Cluster + ingress + namespace ready."

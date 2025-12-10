@@ -1,40 +1,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: message-mgmt
+  name: message-management-deployment
   namespace: sandbox
   labels:
-    app: message-mgmt
+    app: message-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: message-mgmt
+      app: message-management
   template:
     metadata:
       labels:
-        app: message-mgmt
+        app: message-management
     spec:
       containers:
-        - name: message-mgmt
-          image: message-mgmt:latest
+        - name: message-management
+          image: message-management:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8089
+            - containerPort: 8081
           env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: "prod"
+            # 🔽 add RabbitMQ envs here
+            - name: SPRING_RABBITMQ_HOST
+              value: "141.148.196.163"  # or better: host's private IP
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              value: "admin"
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: "admin"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: message-mgmt-service
+  name: message-management-service
   namespace: sandbox
 spec:
   type: ClusterIP
   selector:
-    app: message-mgmt
+    app: message-management
   ports:
     - name: http
-      port: 8089
-      targetPort: 8089
+      port: 8081
+      targetPort: 8081
