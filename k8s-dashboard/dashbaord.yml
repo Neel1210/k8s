@@ -183,7 +183,7 @@ spec:
             - containerPort: 9090
               protocol: TCP
           args:
-            - --auto-generate-certificates
+ #           - --auto-generate-certificates
             - --namespace=kubernetes-dashboard
             - --enable-skip-login # ADD THIS LINE
             - --enable-insecure-login
