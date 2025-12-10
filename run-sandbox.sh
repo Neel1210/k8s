@@ -31,6 +31,7 @@ kubectl apply -f ./sandbox/sandbox-ns.yml
 kubectl apply -f ./sandbox/ingress.yml
 
 # 6. Apply message-management-service in that namespace
+kind load docker-image sandbox-message-management:latest --name sandbox
 kubectl apply -f ./sandbox/message-management-service/message-management-service.yml
 
 # 7. Apply port forwarding
