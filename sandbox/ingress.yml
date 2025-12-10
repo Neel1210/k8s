@@ -30,9 +30,10 @@ spec:
     - http:
         paths:
           - path: /console/?(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
+#pathType: Prefix
             backend:
               service:
-                name: kubernetes-dashboard-kong-proxy 
+                name: kubernetes-dashboard
                 port:
-                  number: 443
+                  number: 80
