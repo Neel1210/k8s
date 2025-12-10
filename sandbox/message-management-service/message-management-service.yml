@@ -24,7 +24,7 @@ spec:
           env:
             # 🔽 add RabbitMQ envs here
             - name: SPRING_RABBITMQ_HOST
-              value: "141.148.196.163"  # or better: host's private IP
+              value: "141.148.196.163" # or better: host's private IP
             - name: SPRING_RABBITMQ_PORT
               value: "5672"
             - name: SPRING_RABBITMQ_USERNAME
