@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: message-management-deployment
+  name: sandbox-message-management-deployment
   namespace: sandbox
   labels:
-    app: message-management
+    app: sandbox-message-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: message-management
+      app: sandbox-message-management
   template:
     metadata:
       labels:
-        app: message-management
+        app: sandbox-message-management
     spec:
       containers:
-        - name: message-management
-          image: message-management:latest
+        - name: sandbox-message-management
+          image: sandbox-message-management:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081
@@ -35,12 +35,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: message-management-service
+  name: sandbox-message-management-service
   namespace: sandbox
 spec:
   type: ClusterIP
   selector:
-    app: message-management
+    app: sandbox-message-management
   ports:
     - name: http
       port: 8081
