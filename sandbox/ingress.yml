@@ -3,16 +3,15 @@ kind: Ingress
 metadata:
   name: sandbox-ingress
   namespace: sandbox
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1	
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:
-         - path: /message-management-service
-           pathType: Prefix
-           backend:
-             service:
-               name: sandbox-message-management-service
-               port:
-                 number: 8081
+          - path: /message-management-service
+            pathType: Prefix
+            backend:
+              service:
+                name: sandbox-message-management-service
+                port:
+                  number: 8081
