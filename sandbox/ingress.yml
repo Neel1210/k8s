@@ -29,7 +29,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /dashboard/
+          - path: /console/?(.*)
             pathType: Prefix
             backend:
               service:
