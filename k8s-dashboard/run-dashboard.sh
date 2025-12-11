@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
-kubectl apply -f dashbaord.yml 
+kubectl apply -f k8s-dashboard.yml 
 sleep 5
 echo "✅ Kubernetes Dashboard deployed."
 
