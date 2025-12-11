@@ -1,8 +1,0 @@
-{
-    "yaml.schemas": {
-        "kubernetes://schema/apps/v1%40deployment": [
-            "file:///Users/Neel_Esh/GitProjects/k8s/k8s-dashboard/dashbaord.yml",
-            "file:///Users/Neel_Esh/GitProjects/k8s/sandbox/worker-service/worker-service.yml"
-        ]
-    }
-}
