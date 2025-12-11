@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sandbox-message-management-deployment
+  namespace: sandbox
+  labels:
+    app: sandbox-message-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sandbox-message-management
+  template:
+    metadata:
+      labels:
+        app: sandbox-message-management
+    spec:
+      containers:
+        - name: sandbox-message-management
+          image: sandbox-message-management:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          env:
+            # 🔽 add RabbitMQ envs here
+            - name: SPRING_RABBITMQ_HOST
+              value: "host.docker.internal" # or better: host's private IP
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              value: "guest"
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: "guest"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sandbox-message-management-service
+  namespace: sandbox
+spec:
+  type: ClusterIP
+  selector:
+    app: sandbox-message-management
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
