@@ -35,6 +35,6 @@ kubectl apply -f ./sandbox/ingress.yml
 kubectl apply -f ./sandbox/message-management-service/message-management-service.yml
 
 # 7. Apply port forwarding
-kubectl port-forward --address 0.0.0.0 svc/ingress-nginx-controller 8090:80 
+kubectl port-forward --address 0.0.0.0 -n ingress-nginx svc/ingress-nginx-controller 8090:80 
 
 echo "✅ Cluster + ingress + namespace ready."
