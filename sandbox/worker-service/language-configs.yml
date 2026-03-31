@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: language-configs
+  namespace: sandbox  # CRITICAL: Must match your deployment namespace
+data:
+  languages.json: |
+    {
+      "python": {
+        "extension": "py",
+        "compileCommand": null,
+        "executeCommand": "python3 {file}",
+        "memoryLimitMb": 64,
+        "timeoutMs": 2000
+      },
+      "java": {
+        "extension": "java",
+        "compileCommand": "javac Main.java",
+        "executeCommand": "java -Xmx128m -cp . Main",
+        "memoryLimitMb": 256,
+        "timeoutMs": 4000
+      },
+      "cpp": {
+        "extension": "cpp",
+        "compileCommand": "g++ -O3 -o out solution.cpp",
+        "executeCommand": "./out",
+        "memoryLimitMb": 32,
+        "timeoutMs": 2000
+      },
+      "javascript": {
+        "extension": "js",
+        "compileCommand": null,
+        "executeCommand": "node {file}",
+        "memoryLimitMb": 128,
+        "timeoutMs": 3000
+      }
+    }

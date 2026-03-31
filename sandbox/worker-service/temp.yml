@@ -15,7 +15,8 @@ spec:
       labels:
         app: worker-service
     spec:
-      runtimeClassName: gvisor  # Use gVisor for sandbox isolation
+      # DO NOT use gVisor for worker-service
+      # It needs full access to containerd socket
       containers:
         - name: worker-service
           image: worker-service:latest
@@ -24,31 +25,28 @@ spec:
             - containerPort: 8082
           env:
             - name: SPRING_RABBITMQ_HOST
-              value: "host.docker.internal" # or better: host's private IP
+              value: "host.docker.internal" 
             - name: SPRING_RABBITMQ_PORT
               value: "5672"
             - name: SPRING_RABBITMQ_USERNAME
               value: "guest"
             - name: SPRING_RABBITMQ_PASSWORD
               value: "guest"
-            - name: CONTAINERD_ADDRESS
-              value: "/run/containerd/containerd.sock"
-            - name: CONTAINERD_NAMESPACE
-              value: "k8s.io"
           volumeMounts:
-            # Mount containerd data directory
+            # Mount containerd socket for nerdctl
+            - name: containerd-run
+              mountPath: /run/containerd
+            # Mount containerd data for images/snapshots
             - name: containerd-data
               mountPath: /var/lib/containerd
             # Mount worker code directory
             - name: worker-code
               mountPath: /var/lib/worker-code
-            # Mount /run/containerd for runtime state
-            - name: containerd-run
-              mountPath: /run/containerd
+            # Mount sandbox images directory (for building/importing images)
+            - name: sandbox-images
+              mountPath: /var/lib/sandbox-images
 
           securityContext:
-            capabilities:
-              add: ["SYS_ADMIN"]
             runAsUser: 0
             runAsGroup: 0
             privileged: true
@@ -63,40 +61,39 @@ spec:
               cpu: "500m"
 
           livenessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8082
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
             periodSeconds: 10
+            failureThreshold: 5
 
           readinessProbe:
-            httpGet:
-              path: /actuator/health
+            tcpSocket:
               port: 8082
-            initialDelaySeconds: 20
+            initialDelaySeconds: 60
             periodSeconds: 5
+            failureThreshold: 5
 
       volumes:
-        # Containerd data directory
-        - name: config-volume
-          configMap:
-            name: language-configs
-        - name: isolate-storage
-          emptyDir: {} # Uses host's local RAM/SSD for fast sandbox I/O
-
-        - name: containerd-data
-          hostPath:
-            path: /var/lib/containerd
-            type: DirectoryOrCreate
-        # Containerd runtime directory
+        # Containerd runtime directory (contains socket)
         - name: containerd-run
           hostPath:
             path: /run/containerd
+            type: DirectoryOrCreate
+        # Containerd data directory
+        - name: containerd-data
+          hostPath:
+            path: /var/lib/containerd
             type: DirectoryOrCreate
         # Worker code directory
         - name: worker-code
           hostPath:
             path: /var/lib/worker-code
+            type: DirectoryOrCreate
+        # Sandbox images directory (shared volume for image tars)
+        - name: sandbox-images
+          hostPath:
+            path: /var/lib/sandbox-images
             type: DirectoryOrCreate
 
 ---

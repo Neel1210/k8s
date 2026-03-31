@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-runner-py-deployment
+  namespace: sandbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-runner-py
+  template:
+    metadata:
+      labels:
+        app: code-runner-py
+    spec:
+      runtimeClassName: gvisor
+      containers:
+        - name: code-runner-py
+          image: sandbox-python:latest
+          imagePullPolicy: IfNotPresent
+          command: ["sleep", "infinity"]
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "256Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: code-runner-py-service
+  namespace: sandbox
+spec:
+  type: ClusterIP
+  selector:
+    app: code-runner-py
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083

@@ -1,0 +1,82 @@
+# 1. Kubernetes Service (Load Balancer for the Worker Pods)
+apiVersion: v1
+kind: Service
+metadata:
+  name: code-executor-worker-service
+  namespace: sandbox
+  labels:
+    app: code-executor-worker
+spec:
+  # Internal ClusterIP service for the Orchestrator to talk to the Workers
+  type: ClusterIP 
+  ports:
+    - port: 8082
+      targetPort: 8082 # Target the Spring Boot default port
+      protocol: TCP
+  selector:
+    app: code-executor-worker
+
+---
+
+# 2. Kubernetes Deployment (The Worker Pool)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-executor-worker-deployment
+  namespace: sandbox
+  labels:
+    app: code-executor-worker
+spec:
+  # Start with a low replica count for testing
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-executor-worker
+  template:
+    metadata:
+      labels:
+        app: code-executor-worker
+    spec:
+      # --- CRUCIAL SECURITY SECTION ---
+      # This enables the gVisor sandbox for strong isolation
+      runtimeClassName: gvisor # <-- REMOVE IF YOUR CLUSTER DOES NOT SUPPORT GVISOR
+      # Optional: Restrict Pod capabilities as much as possible
+      securityContext:
+        runAsUser: 1000        # <-- Set the UID to match the Dockerfile
+        runAsGroup: 1000       # <-- Set the GID to match the Dockerfile (optional but recommended)
+        runAsNonRoot: true     # <-- This is what triggered the original error
+        fsGroup: 1000
+          
+      containers:
+        - name: executor-worker
+          image: worker-service:latest # <-- REPLACE THIS
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SPRING_RABBITMQ_HOST
+              value: "host.docker.internal" # or better: host's private IP
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              value: "guest"
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: "guest"
+          # Use an emptyDir volume for ephemeral storage (code, compiled binaries)
+          # This storage is deleted when the Pod dies, which is secure.
+          volumeMounts:
+            - name: code-temp-volume
+              mountPath: /home/appuser/worker # Matches the WORKDIR in the Dockerfile
+          
+          # --- RESOURCE SECTION (LOW FOR TESTING) ---
+          resources:
+            requests:
+              cpu: "250m"   # 0.1 CPU core requested (very low)
+              memory: "256Mi"
+            limits:
+              cpu: "250m"   # Max 0.25 CPU core
+              memory: "256Mi"
+              
+      volumes:
+        - name: code-temp-volume
+          emptyDir: {}

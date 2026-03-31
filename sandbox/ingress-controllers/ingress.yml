@@ -15,13 +15,20 @@ spec:
                 name: sandbox-message-management-service
                 port:
                   number: 8081
-          - path: /worker-service
+          - path: /test
             pathType: Prefix
             backend:
               service:
                 name: worker-service-service
                 port:
-                  number: 8082
+                  number: 8082 
+#         - path: /worker-service
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: worker-service-service
+#                port:
+#                  number: 8082
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

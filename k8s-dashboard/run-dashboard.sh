@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
-kubectl apply -f k8s-dashboard.yml 
-sleep 5
+kubectl apply -f ./k8s-dashboard.yml 
+sleep 5 
 echo "✅ Kubernetes Dashboard deployed."
 
 kubectl create clusterrolebinding kubernetes-dashboard-admin \
