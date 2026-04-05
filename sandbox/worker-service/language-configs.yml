@@ -7,31 +7,30 @@ data:
   languages.json: |
     {
       "python": {
-        "extension": "py",
-        "compileCommand": null,
-        "executeCommand": "python3 {file}",
-        "memoryLimitMb": 64,
-        "timeoutMs": 2000
-      },
+      "fileName": "solution",
+      "extension": "py",
+      "compileCommand": null,
+      "executeCommand": "/usr/bin/python3 {file}",
+      "memoryLimitMb": 128,
+      "timeoutMs": 5000,
+      "processes": 2
+    },
       "java": {
-        "extension": "java",
-        "compileCommand": "javac Main.java",
-        "executeCommand": "java -Xmx128m -cp . Main",
-        "memoryLimitMb": 256,
-        "timeoutMs": 4000
-      },
+      "fileName": "Main",
+      "extension": "java",
+      "compileCommand": "/opt/java/openjdk/bin/javac Main.java",
+      "executeCommand": "/opt/java/openjdk/bin/java -Xms32m -Xmx128m -XX:MaxMetaspaceSize=128m Main",
+      "memoryLimitMb": 512,
+      "timeoutMs": 5000,
+      "processes": 50
+    },
       "cpp": {
-        "extension": "cpp",
-        "compileCommand": "g++ -O3 -o out solution.cpp",
-        "executeCommand": "./out",
-        "memoryLimitMb": 32,
-        "timeoutMs": 2000
-      },
-      "javascript": {
-        "extension": "js",
-        "compileCommand": null,
-        "executeCommand": "node {file}",
-        "memoryLimitMb": 128,
-        "timeoutMs": 3000
+      "fileName": "solution",
+      "extension": "cpp",
+      "compileCommand": "g++ -O3 -o solution solution.cpp",
+      "executeCommand": "./solution",
+      "memoryLimitMb": 128,
+      "timeoutMs": 5000,
+      "processes": 1
       }
     }

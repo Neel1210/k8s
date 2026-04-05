@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techniska-ui-deployment
+  namespace: techniska-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: techniska-ui
+  template:
+    metadata:
+      labels:
+        app: techniska-ui
+    spec:
+      containers:
+        - name: techniska-ui
+          image: techniska-ui:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80

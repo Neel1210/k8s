@@ -34,10 +34,6 @@ spec:
               value: "guest"
           
           volumeMounts:
-            # Mount the Language Config JSON from ConfigMap
-            - name: config-volume
-              mountPath: /app/config
-            # Mount the Isolate "Box" directory to local ephemeral storage
             - name: isolate-storage
               mountPath: /var/local/lib/isolate
 
@@ -50,7 +46,7 @@ spec:
 
           resources:
             requests:
-              memory: "512Mi"
+              memory: "1Gi"
               cpu: "500m"
             limits:
               memory: "2Gi"
@@ -64,10 +60,9 @@ spec:
             periodSeconds: 15
 
       volumes:
-        - name: config-volume
-          configMap:
-            name: language-configs
-        
+        # - name: config-volume
+        #   configMap:
+        #     name: language-configs
         # Switched to emptyDir for local speed and to avoid hostPath permission issues
         - name: isolate-storage
           emptyDir: {}

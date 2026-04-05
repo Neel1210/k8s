@@ -75,12 +75,14 @@ sleep 5
 kubectl apply -f $current_dir/../sandbox/ingress-controllers/ingress.yml 
 echo "✅ Ingress deployed."
 
-# 6. Apply message-management-service in that namespace
-#kind load docker-image sandbox-message-management:latest --name sandbox
-#kubectl apply -f ./sandbox/message-management-service/message-management-service.yml
-
-# 7. Apply port forwarding
-#kubectl port-forward --address 0.0.0.0 -n ingress-nginx svc/ingress-nginx-controller 8090:80 
-cd ../sandbox/worker-service
-#
 echo "✅ Set-up successfully completed !"
+
+chmod +x $current_dir/../techniska-backend/be-start-script.sh
+$current_dir/../techniska-backend/be-start-script.sh
+echo "✅ techniska-backend deployed !"
+
+chmod +x $current_dir/../techniska-ui/ui-start-script.sh
+$current_dir/../techniska-ui/ui-start-script.sh
+echo "✅ techniska-ui deployed !"
+
+kubectl port-forward --address 0.0.0.0 -n ingress-nginx svc/ingress-nginx-controller 8090:80 

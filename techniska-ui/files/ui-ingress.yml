@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: techniska-ui-ingress
+  namespace: techniska-ui
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /app
+            pathType: Prefix
+            backend:
+              service:
+                name: techniska-ui-service
+                port:
+                  number: 80

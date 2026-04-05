@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: h2-database-deployment
+  namespace: techniska-backend
+  labels:
+    app: h2-database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate # Important: H2 (File-based) cannot be opened by two pods at once during an update
+  selector:
+    matchLabels:
+      app: h2-database
+  template:
+    metadata:
+      labels:
+        app: h2-database
+    spec:
+      containers:
+        - name: h2-database
+          image: techniska-database:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+            - containerPort: 9092
+          volumeMounts:
+            - name: h2-storage
+              mountPath: /root # Maps to "~/" in your JDBC string
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+      volumes:
+        - name: h2-storage
+          persistentVolumeClaim:
+            claimName: h2-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: h2-database-service
+  namespace: techniska-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: h2-database
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: tcp-db
+      protocol: TCP
+      port: 9092
+      targetPort: 9092
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: h2-pvc
+  namespace: techniska-backend
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

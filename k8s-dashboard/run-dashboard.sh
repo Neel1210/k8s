@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
-kubectl apply -f ./k8s-dashboard.yml 
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+kubectl apply -f $SCRIPT_DIR/k8s-dashboard.yml 
 sleep 5 
 echo "✅ Kubernetes Dashboard deployed."
 
