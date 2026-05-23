@@ -9,7 +9,7 @@ RUNTIMECLASS_NAME="gvisor"
 # 1. Recreate kind cluster
 # -----------------------------
 echo "🧹 Deleting existing kind cluster (if any)..."
-.$current_dir/stop-script.sh
+$current_dir/stop_script.sh
 
 echo "📦 Creating kind cluster: $CLUSTER_NAME"
 kind create cluster --name $CLUSTER_NAME --config $current_dir/../../cluster/cluster-config.yml
@@ -20,7 +20,7 @@ sleep 2
 # 2. Install gVisor and RuntimeClass
 # -----------------------------------
 chmod +x $current_dir/temp.sh
-.$current_dir/temp.sh
+$current_dir/temp.sh
 sleep 15
 
 # -----------------------------------
