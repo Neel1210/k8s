@@ -70,12 +70,21 @@ echo "✅ sandbox namespace ready."
 sleep 2
 
 # -----------------------------
-# 7. Apply ingress in that namespace
+# 7. Apply ingress
 # -----------------------------
 
 sleep 5
 kubectl apply -f $current_dir/../../sandbox/ingress-controllers/ingress.yml 
 echo "✅ Ingress deployed."
+
+# -----------------------------
+# 8. Apply namespace
+# -----------------------------
+kubectl apply -f $current_dir/../../sandbox/sandbox-ns.yml
+echo "✅ sandbox namespace ready."
+sleep 2
+
+# -----------------------------
 
 echo "✅ Set-up successfully completed !"
 echo "✅ Starting port forwarding !"

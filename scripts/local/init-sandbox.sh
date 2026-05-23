@@ -22,7 +22,7 @@ echo "🧹 Deleting existing kind cluster (if any)..."
 ./stop-sandbox.sh
 
 echo "📦 Creating kind cluster: $CLUSTER_NAME"
-kind create cluster --name $CLUSTER_NAME --config $current_dir/../cluster/cluster-config.yml
+kind create cluster --name $CLUSTER_NAME --config $current_dir/../../cluster/cluster-config.yml
 kubectl cluster-info --context kind-$CLUSTER_NAME
 sleep 2
 
@@ -57,13 +57,13 @@ while true; do
 done
 
 # 5. Create namespace
-kubectl apply -f $current_dir/../sandbox/sandbox-ns.yml
+kubectl apply -f $current_dir/../../sandbox/sandbox-ns.yml
 echo "✅ sandbox namespace ready."
 sleep 2
 
 # 6. Apply k8s-dashboard in that namespace
-kubectl apply -f $current_dir/../k8s-dashboard/k8s-dashboard.yml
-kubectl apply -f $current_dir/../k8s-dashboard/rb-dashboard-admin.yaml
+kubectl apply -f $current_dir/../../k8s-dashboard/k8s-dashboard.yml
+kubectl apply -f $current_dir/../../k8s-dashboard/rb-dashboard-admin.yaml
 kubectl create clusterrolebinding kubernetes-dashboard-admin \
   --clusterrole=cluster-admin \
   --serviceaccount=kubernetes-dashboard:kubernetes-dashboard
@@ -72,17 +72,17 @@ echo "view on - http://localhost:8090/console/"
 
 #5. Apply ingress in that namespace
 sleep 5
-kubectl apply -f $current_dir/../sandbox/ingress-controllers/ingress.yml 
+kubectl apply -f $current_dir/../../sandbox/ingress-controllers/ingress.yml 
 echo "✅ Ingress deployed."
 
 echo "✅ Set-up successfully completed !"
 
-chmod +x $current_dir/../techniska-backend/be-start-script.sh
-$current_dir/../techniska-backend/be-start-script.sh
+chmod +x $current_dir/../../techniska-backend/be-start-script.sh
+$current_dir/../../techniska-backend/be-start-script.sh
 echo "✅ techniska-backend deployed !"
 
-chmod +x $current_dir/../techniska-ui/ui-start-script.sh
-$current_dir/../techniska-ui/ui-start-script.sh
+chmod +x $current_dir/../../techniska-ui/ui-start-script.sh
+$current_dir/../../techniska-ui/ui-start-script.sh
 echo "✅ techniska-ui deployed !"
 
 kubectl port-forward --address 0.0.0.0 -n ingress-nginx svc/ingress-nginx-controller 8090:80 
