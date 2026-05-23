@@ -29,8 +29,8 @@ sleep 2
 # -----------------------------------
 # 3. Install gVisor and RuntimeClass
 # -----------------------------------
-chmod +x ./temp.sh
-./temp.sh
+chmod +x $current_dir/temp.sh
+.$current_dir/temp.sh
 sleep 15
 
 # -----------------------------------

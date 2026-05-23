@@ -3,31 +3,24 @@ kind: Ingress
 metadata:
   name: techniska-backend-ingress
   namespace: techniska-backend
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
-          - path: /api
-            pathType: Prefix
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: api-gateway-service
                 port:
-                  number: 8080
-          # - path: /auth
-          #   pathType: Prefix
-          #   backend:
-          #     service:
-          #       name: auth-service
-          #       port:
-          #         number: 8080
+                  number: 8080   # ✅ FIXED
           # - path: /api
           #   pathType: Prefix
           #   backend:
           #     service:
           #       name: api-gateway-service
           #       port:
-          #         number: 8080
-
-
+          #         number: 8080   # ✅ FIXED

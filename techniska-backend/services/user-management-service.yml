@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-server-deployment
+  name: user-management-deployment
   namespace: techniska-backend
   labels:
-    app: auth-server
+    app: user-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth-server
+      app: user-management
   template:
     metadata:
       labels:
-        app: auth-server
+        app: user-management
     spec:
       containers:
-        - name: auth-server
-          image: techniska-auth-server:latest
+        - name: user-management
+          image: techniska-user-management-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -38,12 +38,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-server-service
+  name: user-management-service
   namespace: techniska-backend
 spec:
   type: ClusterIP
   selector:
-    app: auth-server
+    app: user-management
   ports:
     - name: http
       port: 8080

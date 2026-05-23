@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: techniska-config
+  namespace: techniska-backend
+data:
+  ALLOWED_ENTRYPOINT: "http://localhost:8090/app"
+
+  SPRING_CLOUD_LOADBALANCER_CACHE_ENABLED: "true"
+  SPRING_CLOUD_LOADBALANCER_CACHE_CAFFEINE_SPEC: "maximumSize=1000,expireAfterWrite=30s"
+
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+
+  API_PROXY_URL_AUTH_SERVER: "http://auth-server-service:8080"
+  API_PROXY_URL_CONTEST_SERVER: "http://techniska-contest-service"
+  API_PROXY_URL_QUESTION_MANAGEMENT_SERVER: "http://techniska-question-service"
+  API_PROXY_URL_RESULT_SERVER: "http://techniska-result-service"
+  API_PROXY_URL_USER_MANAGEMENT_SERVER: "http://user-management-service:8080"
