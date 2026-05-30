@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contest-service-deployment
+  namespace: techniska-backend
+  labels:
+    app: contest-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contest-service
+  template:
+    metadata:
+      labels:
+        app: contest-service
+    spec:
+      containers:
+        - name: contest-service
+          image: techniska-contest-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+
+          envFrom:
+            - configMapRef:
+                name: techniska-config
+            - secretRef:
+                name: techniska-secret 
+                
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contest-service
+  namespace: techniska-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: contest-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

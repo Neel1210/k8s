@@ -4,7 +4,7 @@ metadata:
   name: techniska-config
   namespace: techniska-backend
 data:
-  ALLOWED_ENTRYPOINT: "http://vm1.nnm.org.in:8090/app,http://vm1.nnm.org.in:8090/api"
+  ALLOWED_ENTRYPOINT: "http://vm1.nnm.org.in,http://localhost:3000"
 
   SPRING_CLOUD_LOADBALANCER_CACHE_ENABLED: "true"
   SPRING_CLOUD_LOADBALANCER_CACHE_CAFFEINE_SPEC: "maximumSize=1000,expireAfterWrite=30s"
