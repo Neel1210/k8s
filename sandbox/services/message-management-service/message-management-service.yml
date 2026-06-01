@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-management-deployment
+  namespace: sandbox
+  labels:
+    app: message-management-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: message-management-service
+  template:
+    metadata:
+      labels:
+        app: message-management-service
+    spec:
+      containers:
+        - name: message-management-service
+          image: executor-message-management-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          # 🔽 FIXED: Enforced resource barriers to stop noisy neighbor issues
+          resources:
+            requests:
+              memory: "512Mi"    # Guaranteed starting RAM
+              cpu: "250m"        # 0.25 of a CPU core
+            limits:
+              memory: "512Mi"   # Max RAM ceiling (1GB) before safe isolation
+              cpu: "500m"       # Max 1 full CPU core under intense 50K spikes
+
+          envFrom:
+            - configMapRef:
+                name: sandbox-config
+            - secretRef:
+                name: sandbox-secret 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-management-service
+  namespace: sandbox
+spec:
+  type: ClusterIP
+  selector:
+    app: message-management-service
+  ports:
+    - name: http
+      port: 8088
+      targetPort: 8080

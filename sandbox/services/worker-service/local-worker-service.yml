@@ -18,33 +18,34 @@ spec:
       runtimeClassName: gvisor  # Use gVisor for sandbox isolation
       containers:
         - name: worker-service
-          image: worker-service:latest
+          image: executor-worker-service:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8082
+            # 💡 Change this to 8080 if your Spring Boot app uses the default 8080 port!
+            - containerPort: 8080
+
+          envFrom:
+            - configMapRef:
+                name: sandbox-config
+            - secretRef:
+                name: sandbox-secret             
           env:
-            - name: SPRING_RABBITMQ_HOST
-              value: "host.docker.internal" # or better: host's private IP
-            - name: SPRING_RABBITMQ_PORT
-              value: "5672"
-            - name: SPRING_RABBITMQ_USERNAME
-              value: "guest"
-            - name: SPRING_RABBITMQ_PASSWORD
-              value: "guest"
             - name: CONTAINERD_ADDRESS
               value: "/run/containerd/containerd.sock"
             - name: CONTAINERD_NAMESPACE
               value: "k8s.io"
           volumeMounts:
-            # Mount containerd data directory
             - name: containerd-data
               mountPath: /var/lib/containerd
-            # Mount worker code directory
             - name: worker-code
               mountPath: /var/lib/worker-code
-            # Mount /run/containerd for runtime state
             - name: containerd-run
               mountPath: /run/containerd
+            # 🔽 FIXED: Mounted the missing declared volumes to pass validation
+            - name: config-volume
+              mountPath: /opt/language-configs
+            - name: isolate-storage
+              mountPath: /tmp/isolate
 
           securityContext:
             capabilities:
@@ -62,38 +63,36 @@ spec:
               memory: "1Gi"
               cpu: "500m"
 
+          # 💡 Ensure these ports point to your actual Spring Boot server.port
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8082
+              port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
 
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8082
+              port: 8080
             initialDelaySeconds: 20
             periodSeconds: 5
 
       volumes:
-        # Containerd data directory
         - name: config-volume
           configMap:
             name: language-configs
         - name: isolate-storage
-          emptyDir: {} # Uses host's local RAM/SSD for fast sandbox I/O
+          emptyDir: {} 
 
         - name: containerd-data
           hostPath:
             path: /var/lib/containerd
             type: DirectoryOrCreate
-        # Containerd runtime directory
         - name: containerd-run
           hostPath:
             path: /run/containerd
             type: DirectoryOrCreate
-        # Worker code directory
         - name: worker-code
           hostPath:
             path: /var/lib/worker-code
@@ -111,5 +110,5 @@ spec:
     app: worker-service
   ports:
     - name: http
-      port: 8082
-      targetPort: 8082
+      port: 8080
+      targetPort: 8080  # 💡 Matches your container port perfectly
