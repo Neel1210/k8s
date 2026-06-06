@@ -21,7 +21,6 @@ spec:
           image: executor-worker-service:latest
           imagePullPolicy: IfNotPresent
           ports:
-            # 💡 Change this to 8080 if your Spring Boot app uses the default 8080 port!
             - containerPort: 8080
 
           envFrom:
@@ -34,6 +33,15 @@ spec:
               value: "/run/containerd/containerd.sock"
             - name: CONTAINERD_NAMESPACE
               value: "k8s.io"
+            # 🔑 FIXED: Standard native Spring property for shifting Tomcat's working footprint
+            - name: SERVER_TOMCAT_BASED_DIR
+              value: "/app/tomcat-tmp"
+            # 🔑 FIXED: Forces all fallback Java file utilities to use the safe path context
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Djava.io.tmpdir=/app/tomcat-tmp"
+            - name: MANAGEMENT_HEALTH_REDIS_ENABLED
+              value: 'false'              
+              
           volumeMounts:
             - name: containerd-data
               mountPath: /var/lib/containerd
@@ -41,11 +49,13 @@ spec:
               mountPath: /var/lib/worker-code
             - name: containerd-run
               mountPath: /run/containerd
-            # 🔽 FIXED: Mounted the missing declared volumes to pass validation
             - name: config-volume
               mountPath: /opt/language-configs
             - name: isolate-storage
               mountPath: /tmp/isolate
+            # 🔑 FIXED: Mount writeable emptyDir over target path to bypass gVisor restriction
+            - name: tomcat-scratch
+              mountPath: /app/tomcat-tmp
 
           securityContext:
             capabilities:
@@ -63,7 +73,6 @@ spec:
               memory: "1Gi"
               cpu: "500m"
 
-          # 💡 Ensure these ports point to your actual Spring Boot server.port
           livenessProbe:
             httpGet:
               path: /actuator/health
@@ -84,6 +93,9 @@ spec:
             name: language-configs
         - name: isolate-storage
           emptyDir: {} 
+        # 🔑 FIXED: Declared memory allocation volume backing Tomcat workspace
+        - name: tomcat-scratch
+          emptyDir: {}
 
         - name: containerd-data
           hostPath:
@@ -111,4 +123,4 @@ spec:
   ports:
     - name: http
       port: 8080
-      targetPort: 8080  # 💡 Matches your container port perfectly
+      targetPort: 8080
