@@ -3,20 +3,22 @@ kind: Ingress
 metadata:
   name: sandbox-ingress
   namespace: sandbox
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2  
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
-          - path: /executor-ingester
-            pathType: Prefix
+          - path: /ingester(/|$)(.*)
+            pathType: ImplementationSpecific            
             backend:
               service:
                 name: executor-ingester-service
                 port:
                   number: 8080
-          - path: /worker-service
-            pathType: Prefix
+          - path: /worker-service(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: worker-service
