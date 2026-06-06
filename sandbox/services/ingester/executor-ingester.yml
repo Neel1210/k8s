@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: message-management-deployment
+  name: executor-ingester-deployment
   namespace: sandbox
   labels:
-    app: message-management-service
+    app: executor-ingester
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: message-management-service
+      app: executor-ingester
   template:
     metadata:
       labels:
-        app: message-management-service
+        app: executor-ingester
     spec:
       containers:
-        - name: message-management-service
-          image: executor-message-management-service:latest
+        - name: executor-ingester
+          image: executor-ingester:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -39,12 +39,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: message-management-service
+  name: executor-ingester-service
   namespace: sandbox
 spec:
   type: ClusterIP
   selector:
-    app: message-management-service
+    app: executor-ingester
   ports:
     - name: http
       port: 8088

@@ -8,11 +8,11 @@ spec:
   rules:
     - http:
         paths:
-          - path: /message-management-service
+          - path: /executor-ingester
             pathType: Prefix
             backend:
               service:
-                name: message-management-service
+                name: executor-ingester-service
                 port:
                   number: 8080
           - path: /worker-service
