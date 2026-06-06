@@ -24,7 +24,7 @@ spec:
           # 🔽 FIXED: Enforced resource barriers to stop noisy neighbor issues
           resources:
             requests:
-              memory: "512Mi"    # Guaranteed starting RAM
+              memory: "256Mi"    # Guaranteed starting RAM
               cpu: "250m"        # 0.25 of a CPU core
             limits:
               memory: "512Mi"   # Max RAM ceiling (1GB) before safe isolation
@@ -47,5 +47,5 @@ spec:
     app: executor-ingester
   ports:
     - name: http
-      port: 8088
+      port: 8080
       targetPort: 8080
