@@ -15,14 +15,13 @@ spec:
       labels:
         app: worker-service
     spec:
-      runtimeClassName: gvisor  # Use gVisor for sandbox isolation
+      # 🔑 FIXED: Removed runtimeClassName: gvisor to allow native namespace/chroot commands
       containers:
         - name: worker-service
           image: executor-worker-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
-
           envFrom:
             - configMapRef:
                 name: sandbox-config
@@ -33,15 +32,12 @@ spec:
               value: "/run/containerd/containerd.sock"
             - name: CONTAINERD_NAMESPACE
               value: "k8s.io"
-            # 🔑 FIXED: Standard native Spring property for shifting Tomcat's working footprint
             - name: SERVER_TOMCAT_BASED_DIR
               value: "/app/tomcat-tmp"
-            # 🔑 FIXED: Forces all fallback Java file utilities to use the safe path context
             - name: JAVA_TOOL_OPTIONS
               value: "-Djava.io.tmpdir=/app/tomcat-tmp"
             - name: MANAGEMENT_HEALTH_REDIS_ENABLED
-              value: 'false'              
-              
+              value: 'false'
           volumeMounts:
             - name: containerd-data
               mountPath: /var/lib/containerd
@@ -51,11 +47,12 @@ spec:
               mountPath: /run/containerd
             - name: config-volume
               mountPath: /opt/language-configs
-            - name: isolate-storage
-              mountPath: /tmp/isolate
-            # 🔑 FIXED: Mount writeable emptyDir over target path to bypass gVisor restriction
             - name: tomcat-scratch
               mountPath: /app/tomcat-tmp
+            # 🔑 FIXED: Target the correct directory and enable Bidirectional propagation
+            - name: isolate-storage
+              mountPath: /var/local/lib/isolate
+              mountPropagation: Bidirectional
 
           securityContext:
             capabilities:
@@ -91,12 +88,13 @@ spec:
         - name: config-volume
           configMap:
             name: language-configs
-        - name: isolate-storage
-          emptyDir: {} 
-        # 🔑 FIXED: Declared memory allocation volume backing Tomcat workspace
         - name: tomcat-scratch
           emptyDir: {}
-
+        # 🔑 FIXED: Point the storage directly to the dedicated Isolate host path location
+        - name: isolate-storage
+          hostPath:
+            path: /var/local/lib/isolate
+            type: DirectoryOrCreate
         - name: containerd-data
           hostPath:
             path: /var/lib/containerd
@@ -109,7 +107,6 @@ spec:
           hostPath:
             path: /var/lib/worker-code
             type: DirectoryOrCreate
-
 ---
 apiVersion: v1
 kind: Service
