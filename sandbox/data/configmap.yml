@@ -5,5 +5,6 @@ metadata:
   namespace: sandbox
 data:
   NAME_SPACE: "sandbox"
+  RESULT_TIMEOUT: "10" #units in minutes
 
   
