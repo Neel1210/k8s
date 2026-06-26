@@ -6,5 +6,5 @@ metadata:
 data:
   NAME_SPACE: "sandbox"
   RESULT_TIMEOUT: "10" #units in minutes
-
+  app.executor.language-config-file-path: "file:/files/executor/language-config.json"
   

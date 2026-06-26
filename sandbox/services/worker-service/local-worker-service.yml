@@ -38,6 +38,11 @@ spec:
               value: "-Djava.io.tmpdir=/app/tomcat-tmp"
             - name: MANAGEMENT_HEALTH_REDIS_ENABLED
               value: 'false'
+            - name: LANGUAGE_CONFIG_FILE_PATH
+              valueFrom:
+              configMapKeyRef:
+                name: sandbox-config
+                key: app.executor.language-config-file-path         
           volumeMounts:
             - name: containerd-data
               mountPath: /var/lib/containerd
@@ -47,6 +52,9 @@ spec:
               mountPath: /run/containerd
             - name: config-volume
               mountPath: /opt/language-configs
+            - name: language-config-volume
+              mountPath: /files/executor/language-config.json
+              subPath: language-config.json              
             - name: tomcat-scratch
               mountPath: /app/tomcat-tmp
             # 🔑 FIXED: Target the correct directory and enable Bidirectional propagation
@@ -85,9 +93,10 @@ spec:
             periodSeconds: 5
 
       volumes:
-        - name: config-volume
+        - name: language-config-volume
           configMap:
-            name: language-configs
+            name: sandbox-config
+            key: app.executor.language-config-file-path
         - name: tomcat-scratch
           emptyDir: {}
         # 🔑 FIXED: Point the storage directly to the dedicated Isolate host path location
