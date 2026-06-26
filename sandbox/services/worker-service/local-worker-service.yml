@@ -15,7 +15,6 @@ spec:
       labels:
         app: worker-service
     spec:
-      # 🔑 FIXED: Removed runtimeClassName: gvisor to allow native namespace/chroot commands
       containers:
         - name: worker-service
           image: executor-worker-service:latest
@@ -38,11 +37,12 @@ spec:
               value: "-Djava.io.tmpdir=/app/tomcat-tmp"
             - name: MANAGEMENT_HEALTH_REDIS_ENABLED
               value: 'false'
+            # 🔑 FIXED: Indentation corrected under valueFrom
             - name: LANGUAGE_CONFIG_FILE_PATH
               valueFrom:
-              configMapKeyRef:
-                name: sandbox-config
-                key: app.executor.language-config-file-path         
+                configMapKeyRef:
+                  name: sandbox-config
+                  key: app.executor.language-config-file-path         
           volumeMounts:
             - name: containerd-data
               mountPath: /var/lib/containerd
@@ -50,12 +50,11 @@ spec:
               mountPath: /var/lib/worker-code
             - name: containerd-run
               mountPath: /run/containerd
+            # 🔑 FIXED: Removed subPath so runtime edits to the ConfigMap will auto-update inside the container
             - name: language-config-volume
-              mountPath: /files/executor/language-config.json
-              subPath: language-config.json              
+              mountPath: /files/executor             
             - name: tomcat-scratch
               mountPath: /app/tomcat-tmp
-            # 🔑 FIXED: Target the correct directory and enable Bidirectional propagation
             - name: isolate-storage
               mountPath: /var/local/lib/isolate
               mountPropagation: Bidirectional
@@ -91,16 +90,15 @@ spec:
             periodSeconds: 5
 
       volumes:
+        # 🔑 FIXED: Cleaned up invalid 'key' property and kept items block
         - name: language-config-volume
           configMap:
             name: sandbox-config
-            key: app.executor.language-config-file-path
             items:
-            - key: language-config.json     # Plucks just the JSON file out of the ConfigMap
+            - key: language-config.json
               path: language-config.json
         - name: tomcat-scratch
           emptyDir: {}
-        # 🔑 FIXED: Point the storage directly to the dedicated Isolate host path location
         - name: isolate-storage
           hostPath:
             path: /var/local/lib/isolate
