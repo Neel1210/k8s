@@ -50,8 +50,6 @@ spec:
               mountPath: /var/lib/worker-code
             - name: containerd-run
               mountPath: /run/containerd
-            - name: config-volume
-              mountPath: /opt/language-configs
             - name: language-config-volume
               mountPath: /files/executor/language-config.json
               subPath: language-config.json              
@@ -97,6 +95,9 @@ spec:
           configMap:
             name: sandbox-config
             key: app.executor.language-config-file-path
+            items:
+            - key: language-config.json     # Plucks just the JSON file out of the ConfigMap
+              path: language-config.json
         - name: tomcat-scratch
           emptyDir: {}
         # 🔑 FIXED: Point the storage directly to the dedicated Isolate host path location
