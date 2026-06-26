@@ -37,6 +37,11 @@ spec:
               value: "-Djava.io.tmpdir=/app/tomcat-tmp"
             - name: MANAGEMENT_HEALTH_REDIS_ENABLED
               value: 'false'
+            - name: ISOLATE_INIT_CMD
+              valueFrom:
+                configMapKeyRef:
+                  name: language-config
+                  key: app.executor.isolate-init-cmd
             # 🔑 FIXED: Indentation corrected under valueFrom
             - name: LANGUAGE_CONFIG_FILE_PATH
               valueFrom:
