@@ -90,13 +90,13 @@ spec:
             periodSeconds: 5
 
       volumes:
-        # 🔑 FIXED: Cleaned up invalid 'key' property and kept items block
+        # 🔑 FIXED: Set name to match your ConfigMap name and mapped the key to the right path
         - name: language-config-volume
           configMap:
-            name: sandbox-config
+            name: language-config       # Matches metadata.name of your ConfigMap
             items:
-            - key: language-config.json
-              path: language-config.json
+              - key: languages.json     # The key inside your ConfigMap data block
+                path: language-config.json # The filename that will appear inside /files/executor/            
         - name: tomcat-scratch
           emptyDir: {}
         - name: isolate-storage

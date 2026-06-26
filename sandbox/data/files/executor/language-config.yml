@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: language-config
+  namespace: sandbox
+data:
+  languages.json: |
+    {
+      "python": {
+        "fileName": "solution",
+        "extension": "py",
+        "compileCommand": null,
+        "executeCommand": "/usr/bin/python3 {file}",
+        "memoryLimitMb": 128,
+        "timeoutMs": 5000,
+        "processes": 2
+      },
+      "java": {
+        "fileName": "Main",
+        "extension": "java",
+        "compileCommand": "/opt/java/openjdk/bin/javac -J-Xms8m -J-Xmx32m -J-Xss256k -J-XX:+UseSerialGC -J-XX:+UseCompressedClassPointers -J-XX:CICompilerCount=1 -J-XX:MaxMetaspaceSize=48m -J-XX:ReservedCodeCacheSize=16m -J-XX:TieredStopAtLevel=1 -J-Djava.awt.headless=true {file}",
+        "executeCommand": "/opt/java/openjdk/bin/java -Xms8m -Xmx32m -Xss256k -XX:+UseSerialGC -XX:+UseCompressedClassPointers -XX:CICompilerCount=1 -XX:MaxMetaspaceSize=32m -XX:ReservedCodeCacheSize=16m -XX:TieredStopAtLevel=1 -Djava.awt.headless=true -Djava.security.egd=file:/dev/urandom Main",
+        "memoryLimitMb": 512,
+        "timeoutMs": 5000,
+        "processes": 20
+      },
+      "cpp": {
+        "fileName": "solution",
+        "extension": "cpp",
+        "compileCommand": "/usr/bin/g++ -O0 -o solution solution.cpp",
+        "executeCommand": "./solution",
+        "memoryLimitMb": 128,
+        "timeoutMs": 5000,
+        "processes": 5
+      },
+      "c": {
+        "fileName": "solution",
+        "extension": "c",
+        "compileCommand": "/usr/bin/g++ -O0 -o solution solution.c",
+        "executeCommand": "./solution",
+        "memoryLimitMb": 128,
+        "timeoutMs": 5000,
+        "processes": 5
+      }
+    }
