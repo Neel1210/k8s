@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ex-code-runner
+  name: ex-code-enricher
   namespace: sandbox
   labels:
-    app: ex-code-runner
+    app: ex-code-enricher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ex-code-runner
+      app: ex-code-enricher
   template:
     metadata:
       labels:
-        app: ex-code-runner
+        app: ex-code-enricher
     spec:
       containers:
-        - name: ex-code-runner
-          image: ex-code-runner:latest
+        - name: ex-code-enricher
+          image: ex-code-enricher:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -37,11 +37,6 @@ spec:
               value: "-Djava.io.tmpdir=/app/tomcat-tmp"
             - name: MANAGEMENT_HEALTH_REDIS_ENABLED
               value: 'false'
-            - name: ISOLATE_POOL_SIZE
-              valueFrom:
-                configMapKeyRef:
-                  name: sandbox-config
-                  key: ISOLATE_POOL_SIZE
             - name: ISOLATE_INIT_CMD
               valueFrom:
                 configMapKeyRef:
@@ -85,20 +80,6 @@ spec:
               memory: "1Gi"
               cpu: "500m"
 
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-
-          readinessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 20
-            periodSeconds: 5
-
       volumes:
         # 🔑 FIXED: Set name to match your ConfigMap name and mapped the key to the right path
         - name: language-config-volume
@@ -129,12 +110,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ex-code-runner-service
+  name: ex-code-enricher-service
   namespace: sandbox
 spec:
   type: ClusterIP
   selector:
-    app: ex-code-runner
+    app: ex-code-enricher
   ports:
     - name: http
       port: 8080

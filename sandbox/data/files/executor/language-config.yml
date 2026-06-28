@@ -4,6 +4,7 @@ metadata:
   name: language-config
   namespace: sandbox
 data:
+  app.executor.isolate-init-cmd : "--dir=/lib/aarch64-linux-gnu --dir=/usr/lib/gcc --dir=/usr/include --dir=/usr/libexec --dir=/opt/java/openjdk=/opt/java/openjdk"
   languages.json: |
     {
       "python": {

@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: executor-ingester-deployment
+  name: ex-ingester
   namespace: sandbox
   labels:
-    app: executor-ingester
+    app: ex-ingester
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: executor-ingester
+      app: ex-ingester
   template:
     metadata:
       labels:
-        app: executor-ingester
+        app: ex-ingester
     spec:
       containers:
-        - name: executor-ingester
-          image: executor-ingester:latest
+        - name: ex-ingester
+          image: ex-ingester:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -29,7 +29,12 @@ spec:
             limits:
               memory: "512Mi"   # Max RAM ceiling (1GB) before safe isolation
               cpu: "500m"       # Max 1 full CPU core under intense 50K spikes
-
+          env:
+            - name: APP_LOGGING_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: sandbox-config
+                  key: APP_LOGGING_LEVEL
           envFrom:
             - configMapRef:
                 name: sandbox-config
@@ -39,12 +44,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: executor-ingester-service
+  name: ex-ingester-service
   namespace: sandbox
 spec:
   type: ClusterIP
   selector:
-    app: executor-ingester
+    app: ex-ingester
   ports:
     - name: http
       port: 8080

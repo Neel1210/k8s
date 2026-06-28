@@ -4,6 +4,8 @@ metadata:
   name: sandbox-config
   namespace: sandbox
 data:
+  APP_LOGGING_LEVEL: debug
+  ISOLATE_POOL_SIZE: "10"
   NAME_SPACE: "sandbox"
   RESULT_TIMEOUT: "10" #units in minutes
   app.executor.language-config-file-path: "file:/files/executor/language-config.json"
